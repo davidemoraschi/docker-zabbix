@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  zabbix:
+    image: zabbix
+    build:
+      context: .
+      dockerfile: ./Dockerfile
