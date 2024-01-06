@@ -1,0 +1,56 @@
+networks:
+  zabbix-net:
+    name: zabbix-net
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: "${BACKEND_ENABLE_IPV6}"
+    internal: true
+    ipam:
+      driver: "${BACKEND_NETWORK_DRIVER}"
+      config:
+      - subnet: "${BACKEND_SUBNET}"
+
+services:
+  postgres-server:
+    image: "${POSTGRESQL_IMAGE}:${POSTGRESQL_IMAGE_TAG}"
+  #  command: -c ssl=on -c ssl_cert_file=/run/secrets/server-cert.pem -c ssl_key_file=/run/secrets/server-key.pem -c ssl_ca_file=/run/secrets/root-ca.pem
+    restart: "${RESTART_POLICY}"
+    volumes:
+    - ${DATA_DIRECTORY}/var/lib/postgresql/data:/var/lib/postgresql/data:rw
+    - ${ENV_VARS_DIRECTORY}/.ZBX_DB_CA_FILE:/run/secrets/root-ca.pem:ro
+    - ${ENV_VARS_DIRECTORY}/.ZBX_DB_CERT_FILE:/run/secrets/server-cert.pem:ro
+    - ${ENV_VARS_DIRECTORY}/.ZBX_DB_KEY_FILE:/run/secrets/server-key.pem:ro
+    env_file:
+    - ${ENV_VARS_DIRECTORY}/.env_db_pgsql
+    secrets:
+    - POSTGRES_USER
+    - POSTGRES_PASSWORD
+    stop_grace_period: 1m
+    networks:
+      zabbix-net:
+        aliases:
+        - postgres-server
+
+  zabbix-server-pgsql:
+    image: "${ZABBIX_SERVER_PGSQL_IMAGE}:${ZABBIX_UBUNTU_IMAGE_TAG}${ZABBIX_IMAGE_TAG_POSTFIX}"
+    volumes:
+    - ${ENV_VARS_DIRECTORY}/.ZBX_DB_CA_FILE:/run/secrets/root-ca.pem:ro
+    - ${ENV_VARS_DIRECTORY}/.ZBX_DB_CERT_FILE:/run/secrets/server-cert.pem:ro
+    - ${ENV_VARS_DIRECTORY}/.ZBX_DB_KEY_FILE:/run/secrets/server-key.pem:ro
+    depends_on:
+     - postgres-server
+    env_file:
+    - ${ENV_VARS_DIRECTORY}/.env_db_pgsql
+    secrets:
+    - POSTGRES_USER
+    - POSTGRES_PASSWORD
+    networks:
+      zabbix-net:
+        aliases:
+          - zabbix-server-pgsql
+
+secrets:
+  POSTGRES_USER:
+    file: ${ENV_VARS_DIRECTORY}/.POSTGRES_USER
+  POSTGRES_PASSWORD:
+    file: ${ENV_VARS_DIRECTORY}/.POSTGRES_PASSWORD
