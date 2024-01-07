@@ -38,6 +38,8 @@ docker run -h zabbix-server-pgsql --name zabbix-server-pgsql -t ^
       -v ./zabbix:/usr/lib/zabbix:rw ^
       -v ./snmptraps:/var/lib/zabbix/snmptraps:rw ^
       -v ./mibs:/usr/share/snmp/mibs:ro ^
+      -v %userprofile%\.aws:/var/lib/zabbix/.aws ^
+      -v %cd%:/aws ^
       --restart unless-stopped ^
       -d zabbix/zabbix-server-pgsql:alpine-6.4-latest
 
