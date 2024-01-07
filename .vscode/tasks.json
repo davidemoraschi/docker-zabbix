@@ -7,14 +7,15 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
+                "-m64",
                 "${file}",
                 "-IC:\\Sources\\vcpkg\\packages\\aws-sdk-cpp_x64-windows\\include",
                 "-IC:\\Sources\\vcpkg\\packages\\aws-crt-cpp_x64-windows\\include",
-                "-IC:\\Sources\\vcpkg\\packages\\aws-c-common_x64-windows\\include",
                 "-IC:\\Sources\\vcpkg\\packages\\aws-c-io_x64-windows\\include",
                 "-IC:\\Sources\\vcpkg\\packages\\aws-c-mqtt_x64-windows\\include",
                 "-IC:\\Sources\\vcpkg\\packages\\aws-c-auth_x64-windows\\include",
                 "-IC:\\Sources\\vcpkg\\packages\\aws-c-sdkutils_x64-windows\\include",
+                "-IC:\\Sources\\vcpkg\\packages\\aws-c-common_x64-windows\\include",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],

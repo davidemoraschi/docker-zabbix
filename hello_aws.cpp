@@ -5,6 +5,7 @@ int main(int argc, char **argv)
     Aws::InitAPI(options);
     {
         // make your SDK calls here.
+        Aws::Client::ClientConfiguration clientConfig;
     }
     Aws::ShutdownAPI(options);
     return 0;
