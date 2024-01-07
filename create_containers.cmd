@@ -4,19 +4,20 @@ docker network create --subnet 172.20.0.0/16 --ip-range 172.20.240.0/20 zabbix-n
 docker stop postgres-server
 docker remove postgres-server
 docker run -h postgres-server --name postgres-server -t ^
-      -v ./data:/var/lib/postgresql/data ^
+      -v ./postgres-data:/var/lib/postgresql/data ^
       -e POSTGRES_USER="zabbix" ^
       -e POSTGRES_PASSWORD="zabbix_pwd" ^
       -e POSTGRES_DB="zabbix" ^
       --network=zabbix-net ^
+      -p 5432:5432 ^
       --restart unless-stopped ^
       -d postgres:latest
 
 docker stop zabbix-snmptraps
 docker remove zabbix-snmptraps
 docker run -h zabbix-snmptraps --name zabbix-snmptraps -t ^
-      -v /zbx_instance/snmptraps:/var/lib/zabbix/snmptraps:rw ^
-      -v /var/lib/zabbix/mibs:/usr/share/snmp/mibs:ro ^
+      -v ./snmptraps:/var/lib/zabbix/snmptraps:rw ^
+      -v ./mibs:/usr/share/snmp/mibs:ro ^
       --network=zabbix-net ^
       -p 162:1162/udp ^
       --restart unless-stopped ^
@@ -34,7 +35,9 @@ docker run -h zabbix-server-pgsql --name zabbix-server-pgsql -t ^
       -e ZBX_ENABLE_SNMP_TRAPS="true" ^
       --network=zabbix-net ^
       -p 10051:10051 ^
-      --volumes-from zabbix-snmptraps ^
+      -v ./zabbix:/usr/lib/zabbix ^
+      -v ./snmptraps:/var/lib/zabbix/snmptraps:rw ^
+      -v ./mibs:/usr/share/snmp/mibs:ro ^
       --restart unless-stopped ^
       -d zabbix/zabbix-server-pgsql:alpine-6.4-latest
 
@@ -62,6 +65,6 @@ docker run -h zabbix-web-nginx-pgsq --name zabbix-web-nginx-pgsql -t ^
       --network=zabbix-net ^
       -p 443:8443 ^
       -p 80:8080 ^
-      -v /etc/ssl/nginx:/etc/ssl/nginx:ro ^
+      -v ./nginx:/etc/ssl/nginx:ro ^
       --restart unless-stopped ^
       -d zabbix/zabbix-web-nginx-pgsql:alpine-6.4-latest
