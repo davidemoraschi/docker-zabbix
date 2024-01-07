@@ -35,7 +35,7 @@ docker run -h zabbix-server-pgsql --name zabbix-server-pgsql -t ^
       -e ZBX_ENABLE_SNMP_TRAPS="true" ^
       --network=zabbix-net ^
       -p 10051:10051 ^
-      -v ./zabbix:/usr/lib/zabbix ^
+      -v ./zabbix:/usr/lib/zabbix:rw ^
       -v ./snmptraps:/var/lib/zabbix/snmptraps:rw ^
       -v ./mibs:/usr/share/snmp/mibs:ro ^
       --restart unless-stopped ^
