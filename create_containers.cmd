@@ -70,3 +70,7 @@ docker run -h zabbix-web-nginx-pgsq --name zabbix-web-nginx-pgsql -t ^
       -v ./nginx:/etc/ssl/nginx:ro ^
       --restart unless-stopped ^
       -d zabbix/zabbix-web-nginx-pgsql:alpine-6.4-latest
+
+
+
+docker run -h aws-sdk-examples --name aws-sdk-examples --volume %userprofile%/.aws/credentials:/root/.aws/credentials -d public.ecr.aws/b4v4v1s0/cpp:latest
